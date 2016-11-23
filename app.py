@@ -6,6 +6,8 @@ from werkzeug import secure_filename
 import sqlalchemy
 from models import create_tables
 from sqlalchemy.sql import and_
+from sqlalchemy import create_engine, func
+from sqlalchemy.orm import sessionmaker
 def connect(user, password, db, host='localhost', port=5432):
     '''Returns a connection and a metadata object'''
     # We connect with the help of the PostgreSQL URL
@@ -22,7 +24,8 @@ def connect(user, password, db, host='localhost', port=5432):
     return con, meta
 
 con, meta = connect('karan', 'karan', 'supplyai')
-print (con)
+Session = sessionmaker(bind=con)
+session = Session()
 cwd = os.getcwd()
 UPLOAD_FOLDER = cwd + '/upload/'
 ALLOWED_EXTENSIONS = set(['csv'])
@@ -39,7 +42,7 @@ def allowed_file(filename):
 def hello():
     return "Hello World!"
 
-@app.route('/query')
+@app.route('/query', methods=['GET'])
 def query():
     result = meta.tables['result']
     args = (request.args)
@@ -60,9 +63,14 @@ def query():
 
     return jsonify(data)
 
-@app.route('/<name>')
-def hello_name(name):
-    return "Hello {}!".format(name)
+@app.route('/count', methods=['GET'])
+def count():
+    result = meta.tables['result']
+    shipper_name = request.args.get('shipper_name')
+    m = session.query(result.c.order_created_date, func.count(result.c.order_created_date)).filter(result.c.shipper_name== shipper_name).group_by(result.c.order_created_date).all()
+    return jsonify(m)
+
+
 
 @app.route("/upload", methods=['GET', 'POST'])
 def index():
