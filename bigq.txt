@@ -69,3 +69,16 @@ meta.create_all(con)
         cmd = 'COPY fulldata FROM STDIN WITH (FORMAT CSV, HEADER TRUE)'
         cursor.copy_expert(cmd, f)
         so.commit()
+
+
+In [40]: so = con.raw_connection()
+
+In [41]: cursor = so.cursor()
+
+In [42]: sample = "INSERT into result (order_id, buyer_city, seller_city, product_catego
+    ...: ry, shipper_name,order_created_date)\nSELECT order_id, buyer_city, seller_city,
+    ...:  product_category, shipper_name,order_created_date\nFROM fulldata"
+
+In [43]: cursor.execute(sample)
+
+In [44]: so.commit()

@@ -57,7 +57,8 @@ def index():
             if not os.path.exists(UPLOAD_FOLDER):
                 os.makedirs(UPLOAD_FOLDER)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            create_tables(con,meta,file)
+            path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            create_tables(con,meta,path)
             return redirect(url_for('index'))
     return """
     <!doctype html>

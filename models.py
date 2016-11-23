@@ -1,6 +1,6 @@
 from sqlalchemy import (Table, Column, Integer, String, Boolean, TIMESTAMP)
 
-def create_tables(con,meta, csvdata):
+def create_tables(con,meta, path):
 
     fulldata = Table('fulldata', meta,
         Column('id', Integer, autoincrement=True), 
@@ -38,7 +38,8 @@ def create_tables(con,meta, csvdata):
         Column('shipper_confirmation_date', TIMESTAMP),
         Column('shipper_name', String),
         Column('shipping_cost', Integer),
-        Column('weight', Integer)
+        Column('weight', Integer),
+        extend_existing=True
         )
     result = Table('result', meta,
         Column('order_id', String, primary_key=True),
@@ -46,11 +47,22 @@ def create_tables(con,meta, csvdata):
         Column('seller_city', String),
         Column('product_category', String),
         Column('shipper_name', String),
-        Column('order_created_date', TIMESTAMP)
+        Column('order_created_date', TIMESTAMP),
+        extend_existing=True
     )
-    meta.create_all(con)
-    so = con.raw_connection()
-    cursor = so.cursor()
-    cmd = 'COPY fulldata FROM STDIN WITH (FORMAT CSV, HEADER TRUE)'
-    cursor.copy_expert(cmd, csvdata)
-    so.commit()
+    print (con)
+    print (meta)
+    print (path)
+    with open(path ,'r') as thefile:
+        meta.create_all(con)
+        so = con.raw_connection()
+        cursor = so.cursor()
+        cmd = 'COPY fulldata FROM STDIN WITH (FORMAT CSV, HEADER TRUE)'
+        cursor.copy_expert(cmd, thefile)
+
+        smallertable =  'INSERT into result (order_id, buyer_city, seller_city, product_category,'\
+                        'shipper_name,order_created_date)\nSELECT order_id, buyer_city, seller_city,product_category,'\
+                        'shipper_name,order_created_date\nFROM fulldata'
+
+        cursor.execute(smallertable)
+        so.commit()
