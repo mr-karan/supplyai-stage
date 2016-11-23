@@ -2,3 +2,57 @@
 
 CREATE TABLE fulldata (id serial, awb integer,breadth integer,buyer_city varchar,buyer_pin integer,cancelled_date timestamp with time zone,current_status varchar,delivered_date timestamp with time zone,delivery_attempt_count integer,dispatch_date timestamp with time zone,heavy boolean,height integer,last_mile_arrival_date timestamp with time zone,last_modified timestamp with time zone,length integer,order_created_date timestamp with time zone,order_id varchar PRIMARY KEY,price integer,product_category varchar,product_id varchar,product_name varchar,product_price integer,product_qty integer,promised_date timestamp with time zone,return_cause varchar,reverse_logistics_booked_date timestamp with time zone,reverse_logistics_date timestamp with time zone,reverse_logistics_delivered_date timestamp with time zone,rto_date timestamp with time zone,rto_delivered_date timestamp with time zone,seller_city varchar,seller_pin integer,shipper_confirmation_date timestamp with time zone,shipper_name varchar,shipping_cost integer,weight integer);
 COPY fulldata FROM '/Users/ninjaPython/data.csv' DELIMITER ',' CSV HEADER;
+CREATE TABLE result(order_id varchar, buyer_city varchar, seller_city varchar, product_category varchar, shipper_name varchar,order_created_date timestamp with time zone);
+INSERT into result (order_id, buyer_city, seller_city, product_category, shipper_name,order_created_date)
+SELECT order_id, buyer_city, seller_city, product_category, shipper_name,order_created_date
+FROM fulldata;
+SELECT * FROM result WHERE order_id='96a90543-ff1b-418c-bf2c-84fcdac75e2b';
+
+SELECT COUNT(*),order_created_date
+FROM result
+WHERE shipper_name='SHPR2'
+GROUP BY order_created_date; 
+
+slams = Table('slams', meta,
+    Column('name', String, primary_key=True),
+    Column('country', String)
+)
+
+fulldata = Table('fulldata', meta,
+    Column('id', serial), 
+    Column('awb', integer),
+    Column('breadth', integer),
+    Column('buyer_city' varchar),
+    Column('buyer_pin', integer),
+    Column('cancelled_date', timestamp with time zone),
+    Column('current_status', varchar),
+    Column('delivered_date', timestamp with time zone),
+    Column('delivery_attempt_count', integer),
+    Column('dispatch_date', timestamp with time zone),
+    Column('heavy', boolean),
+    Column('height', integer),
+    Column('last_mile_arrival_date', timestamp with time zone),
+    Column('last_modified', timestamp with time zone),
+    Column('length', integer),
+    Column('order_created_date', timestamp with time zone)
+    Column('order_id', varchar, PRIMARY KEY),
+    Column('price', integer),
+    Column('product_category', varchar),
+    Column('product_id', varchar),
+    Column('product_name', varchar),
+    Column('product_price', integer),
+    Column('product_qty', integer),
+    Column('promised_date', timestamp with time zone),
+    Column('return_cause', varchar),
+    Column('reverse_logistics_booked_date', timestamp with time zone),
+    Column('reverse_logistics_date', timestamp with time zone),
+    Column('reverse_logistics_delivered_date', timestamp with time zone),
+    Column('rto_date' timestamp with time zone),
+    Column('rto_delivered_date', timestamp with time zone),
+    Column('seller_city', varchar),
+    Column('seller_pin', integer),
+    Column('shipper_confirmation_date', timestamp with time zone),
+    Column('shipper_name', varchar),
+    Column('shipping_cost', integer),
+    Column('weight', integer)
+    )
