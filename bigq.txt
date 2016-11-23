@@ -13,46 +13,50 @@ FROM result
 WHERE shipper_name='SHPR2'
 GROUP BY order_created_date; 
 
-slams = Table('slams', meta,
-    Column('name', String, primary_key=True),
-    Column('country', String)
-)
+from sqlalchemy import (Table, Column, Integer, String, Boolean, TIMESTAMP)
 
 fulldata = Table('fulldata', meta,
-    Column('id', serial), 
-    Column('awb', integer),
-    Column('breadth', integer),
-    Column('buyer_city' varchar),
-    Column('buyer_pin', integer),
-    Column('cancelled_date', timestamp with time zone),
-    Column('current_status', varchar),
-    Column('delivered_date', timestamp with time zone),
-    Column('delivery_attempt_count', integer),
-    Column('dispatch_date', timestamp with time zone),
-    Column('heavy', boolean),
-    Column('height', integer),
-    Column('last_mile_arrival_date', timestamp with time zone),
-    Column('last_modified', timestamp with time zone),
-    Column('length', integer),
-    Column('order_created_date', timestamp with time zone)
-    Column('order_id', varchar, PRIMARY KEY),
-    Column('price', integer),
-    Column('product_category', varchar),
-    Column('product_id', varchar),
-    Column('product_name', varchar),
-    Column('product_price', integer),
-    Column('product_qty', integer),
-    Column('promised_date', timestamp with time zone),
-    Column('return_cause', varchar),
-    Column('reverse_logistics_booked_date', timestamp with time zone),
-    Column('reverse_logistics_date', timestamp with time zone),
-    Column('reverse_logistics_delivered_date', timestamp with time zone),
-    Column('rto_date' timestamp with time zone),
-    Column('rto_delivered_date', timestamp with time zone),
-    Column('seller_city', varchar),
-    Column('seller_pin', integer),
-    Column('shipper_confirmation_date', timestamp with time zone),
-    Column('shipper_name', varchar),
-    Column('shipping_cost', integer),
-    Column('weight', integer)
+    Column('id', Integer, autoincrement=True), 
+    Column('awb', Integer),
+    Column('breadth', Integer),
+    Column('buyer_city', String),
+    Column('buyer_pin', Integer),
+    Column('cancelled_date', TIMESTAMP),
+    Column('current_status', String),
+    Column('delivered_date', TIMESTAMP),
+    Column('delivery_attempt_count', Integer),
+    Column('dispatch_date', TIMESTAMP),
+    Column('heavy', Boolean),
+    Column('height', Integer),
+    Column('last_mile_arrival_date', TIMESTAMP),
+    Column('last_modified', TIMESTAMP),
+    Column('length', Integer),
+    Column('order_created_date', TIMESTAMP),
+    Column('order_id', String, primary_key=True),
+    Column('price', Integer),
+    Column('product_category', String),
+    Column('product_id', String),
+    Column('product_name', String),
+    Column('product_price', Integer),
+    Column('product_qty', Integer),
+    Column('promised_date', TIMESTAMP),
+    Column('return_cause', String),
+    Column('reverse_logistics_booked_date', TIMESTAMP),
+    Column('reverse_logistics_date', TIMESTAMP),
+    Column('reverse_logistics_delivered_date', TIMESTAMP),
+    Column('rto_date', TIMESTAMP),
+    Column('rto_delivered_date', TIMESTAMP),
+    Column('seller_city', String),
+    Column('seller_pin', Integer),
+    Column('shipper_confirmation_date', TIMESTAMP),
+    Column('shipper_name', String),
+    Column('shipping_cost', Integer),
+    Column('weight', Integer)
     )
+meta.create_all(con)
+    with open('/Users/ninjaPython/data.csv', 'r') as f:
+        so = con.raw_connection()
+        cursor = so.cursor()
+        cmd = 'COPY fulldata FROM STDIN WITH (FORMAT CSV, HEADER FALSE)'
+        cursor.copy_expert(cmd, f)
+        so.commit()
