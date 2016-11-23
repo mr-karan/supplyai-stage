@@ -1,9 +1,9 @@
 import os
-from flask import Flask, request, redirect, url_for
+from flask import Flask, request, redirect, url_for, jsonify 
 from werkzeug import secure_filename
 
 import sqlalchemy
-
+from models import create_tables
 def connect(user, password, db, host='localhost', port=5432):
     '''Returns a connection and a metadata object'''
     # We connect with the help of the PostgreSQL URL
@@ -20,7 +20,7 @@ def connect(user, password, db, host='localhost', port=5432):
     return con, meta
 
 con, meta = connect('karan', 'karan', 'supplyai')
-
+print (con)
 cwd = os.getcwd()
 UPLOAD_FOLDER = cwd + '/upload/'
 ALLOWED_EXTENSIONS = set(['csv'])
@@ -37,6 +37,12 @@ def allowed_file(filename):
 def hello():
     return "Hello World!"
 
+@app.route('/query')
+def query():
+    args = (request.args)
+    if 'order_id' in args:
+        print("Order id: "+args['order_id'])
+    return jsonify(request.args)
 
 @app.route('/<name>')
 def hello_name(name):
@@ -51,6 +57,7 @@ def index():
             if not os.path.exists(UPLOAD_FOLDER):
                 os.makedirs(UPLOAD_FOLDER)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            create_tables(con,meta,file)
             return redirect(url_for('index'))
     return """
     <!doctype html>

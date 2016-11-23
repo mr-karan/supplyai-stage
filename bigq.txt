@@ -15,6 +15,7 @@ GROUP BY order_created_date;
 
 from sqlalchemy import (Table, Column, Integer, String, Boolean, TIMESTAMP)
 
+
 fulldata = Table('fulldata', meta,
     Column('id', Integer, autoincrement=True), 
     Column('awb', Integer),
@@ -53,10 +54,18 @@ fulldata = Table('fulldata', meta,
     Column('shipping_cost', Integer),
     Column('weight', Integer)
     )
+result = Table('result', meta,
+    Column('order_id', String, primary_key=True),
+    Column('buyer_city', String),
+    Column('seller_city', String),
+    Column('product_category', String),
+    Column('shipper_name', String),
+    Column('order_created_date', TIMESTAMP)
+)
 meta.create_all(con)
     with open('/Users/ninjaPython/data.csv', 'r') as f:
         so = con.raw_connection()
         cursor = so.cursor()
-        cmd = 'COPY fulldata FROM STDIN WITH (FORMAT CSV, HEADER FALSE)'
+        cmd = 'COPY fulldata FROM STDIN WITH (FORMAT CSV, HEADER TRUE)'
         cursor.copy_expert(cmd, f)
         so.commit()
