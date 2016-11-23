@@ -82,3 +82,18 @@ In [42]: sample = "INSERT into result (order_id, buyer_city, seller_city, produc
 In [43]: cursor.execute(sample)
 
 In [44]: so.commit()
+
+clause = result.select().where(result.c.order_id == '6db783b3-0fe3-4a61-8ff5-e1cff2f2f7fc')
+
+In [66]: import datetime
+    ...: import json
+    ...:
+    ...: def datetime_handler(x):
+    ...:     if isinstance(x, datetime.datetime):
+    ...:         return x.isoformat()
+    ...:     raise TypeError("Unknown type")
+    ...:
+
+In [67]: json.dumps([dict(r) for r in con.execute(clause)], default=datetime_handler)
+Out[67]: '[{"order_created_date": "2015-12-10T06:53:17", "product_category": "Tablets", "seller_city": "Ivonnestad", "buyer_city": "East Tamraville", "order_id": "6db783b3-0fe3-4a61-8ff5-e1cff2f2f7fc", "shipper_name": "SHPR4"}]'
+

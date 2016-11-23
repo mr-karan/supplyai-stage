@@ -1,9 +1,11 @@
 import os
-from flask import Flask, request, redirect, url_for, jsonify 
+import json
+from flask import Flask, request, redirect, url_for, jsonify
 from werkzeug import secure_filename
 
 import sqlalchemy
 from models import create_tables
+from sqlalchemy.sql import and_
 def connect(user, password, db, host='localhost', port=5432):
     '''Returns a connection and a metadata object'''
     # We connect with the help of the PostgreSQL URL
@@ -39,10 +41,24 @@ def hello():
 
 @app.route('/query')
 def query():
+    result = meta.tables['result']
     args = (request.args)
-    if 'order_id' in args:
-        print("Order id: "+args['order_id'])
-    return jsonify(request.args)
+    conditions = []
+    if request.args.get('order_id') is not None:
+        conditions.append(result.c.order_id == args['order_id'])
+    if request.args.get('seller_city') is not None:
+        conditions.append(result.c.seller_city == args['seller_city'])
+    if request.args.get('buyer_city') is not None:
+        conditions.append(result.c.buyer_city == args['buyer_city'])
+    if request.args.get('product_category') is not None:
+        conditions.append(result.c.product_category == args['product_category'])
+
+    clause = result.select().where(and_(*conditions))
+    data = {}
+    for row in con.execute(clause):
+        data.setdefault("Shipper Name",[]).append(row['shipper_name'])
+
+    return jsonify(data)
 
 @app.route('/<name>')
 def hello_name(name):
