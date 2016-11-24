@@ -1,6 +1,6 @@
 
 
-CREATE TABLE fulldata (id serial, awb integer,breadth integer,buyer_city varchar,buyer_pin integer,cancelled_date timestamp with time zone,current_status varchar,delivered_date timestamp with time zone,delivery_attempt_count integer,dispatch_date timestamp with time zone,heavy boolean,height integer,last_mile_arrival_date timestamp with time zone,last_modified timestamp with time zone,length integer,order_created_date timestamp with time zone,order_id varchar PRIMARY KEY,price integer,product_category varchar,product_id varchar,product_name varchar,product_price integer,product_qty integer,promised_date timestamp with time zone,return_cause varchar,reverse_logistics_booked_date timestamp with time zone,reverse_logistics_date timestamp with time zone,reverse_logistics_delivered_date timestamp with time zone,rto_date timestamp with time zone,rto_delivered_date timestamp with time zone,seller_city varchar,seller_pin integer,shipper_confirmation_date timestamp with time zone,shipper_name varchar,shipping_cost integer,weight integer);
+CREATE TABLE fulldata ( awb integer,breadth integer,buyer_city varchar,buyer_pin integer,cancelled_date timestamp with time zone,current_status varchar,delivered_date timestamp with time zone,delivery_attempt_count integer,dispatch_date timestamp with time zone,heavy boolean,height integer,last_mile_arrival_date timestamp with time zone,last_modified timestamp with time zone,length integer,order_created_date timestamp with time zone,order_id varchar PRIMARY KEY,price integer,product_category varchar,product_id varchar,product_name varchar,product_price integer,product_qty integer,promised_date timestamp with time zone,return_cause varchar,reverse_logistics_booked_date timestamp with time zone,reverse_logistics_date timestamp with time zone,reverse_logistics_delivered_date timestamp with time zone,rto_date timestamp with time zone,rto_delivered_date timestamp with time zone,seller_city varchar,seller_pin integer,shipper_confirmation_date timestamp with time zone,shipper_name varchar,shipping_cost integer,weight integer);
 COPY fulldata FROM '/Users/ninjaPython/data.csv' DELIMITER ',' CSV HEADER;
 CREATE TABLE result(order_id varchar, buyer_city varchar, seller_city varchar, product_category varchar, shipper_name varchar,order_created_date timestamp with time zone);
 INSERT into result (order_id, buyer_city, seller_city, product_category, shipper_name,order_created_date)
@@ -101,3 +101,30 @@ Out[67]: '[{"order_created_date": "2015-12-10T06:53:17", "product_category": "Ta
 session.query(result.c.order_created_date, func.count(result.c.order_creat
      ...: ed_date)).filter(result.c.shipper_name=='SHPR2').group_by(result.c.order_creat
      ...: ed_date).all()
+
+     In [276]: q = session.query(full.c.shipper_name).filter(or_(full.c.seller_city == v for
+     ...: v in ['Winifredbury','Azariahshire'])).all()
+
+
+In [288]: q = session.query(full.c.shipper_name).filter(or_(full.c.seller_city == v for
+     ...: v in ['Winifredbury','Azariahshire']),and_(full.c.order_id=='152ddd3f-4938-46b
+     ...: c-bdb2-44f18a044615')).all()
+
+kwargs = {'hometown': 'New York', 'university' : 'USC'}
+User.query.filter_by(**kwargs)
+# This above line is equivalent to saying...
+User.query.filter_by(hometown='New York', university='USC')
+
+
+In [320]: filter_group = [or_(full.c.seller_city == v for v in ['Winifredbury','Azariahshire']),or_(full.c.order_id == v for v in ['152ddd3f-4938-46bc-bdb2-44f18a044615'])]
+
+In [321]: q = session.query(full.c.order_id).filter(and_(*filter_group))
+
+In [322]: q.all()
+Out[322]: [('152ddd3f-4938-46bc-bdb2-44f18a044615')]
+
+In [323]: q = session.query(full.c.shipper_name).filter(and_(*filter_group))
+
+In [324]: q.all()
+Out[324]: [('SHPR7')]
+
