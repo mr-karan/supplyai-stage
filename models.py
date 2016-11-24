@@ -50,9 +50,6 @@ def create_tables(con,meta, path):
         Column('order_created_date', TIMESTAMP),
         extend_existing=True
     )
-    print (con)
-    print (meta)
-    print (path)
     with open(path ,'r') as thefile:
         meta.create_all(con)
         so = con.raw_connection()
