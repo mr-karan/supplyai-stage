@@ -91,7 +91,6 @@ Date: Fri, 25 Nov 2016 04:03:12 GMT
   ]
   ...
   }
-
 ```
 
 ![/fetch/](screenshots/fetch.png)
