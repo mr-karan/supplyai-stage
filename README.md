@@ -1,58 +1,282 @@
-Documentation
+## Documentation
 
-**Title**
+**Supply AI  - data.csv**
 ----
-  <_Additional information about your API call. Try to use verbs that match both request type (fetching vs modifying) and plurality (one vs multiple)._>
+  Use this API to ingest data.csv to PostgresSQL Database and query using filter parameters like `seller_city`,  `product category` etc. 
 
-* **URL**
+#### Uploading CSV
 
-  <_The URL Structure (path only, no root url)_>
+ Go to `localhost:5000/upload/` and use the uploader utility to upload files. The file is stored in `/upload/` directory and only accepts
+ `.csv` files.
+
+#### API Routes
+
+* **/fetch**
+
+This route fetches `n` rows from CSV and ingests in DB. `n` can be an integer like `785` or a range like `90-100`.
 
 * **Method:**
   
-  <_The request type_>
-
-  `GET` | `POST` | `DELETE` | `PUT`
+  `GET` 
   
 *  **URL Params**
 
-   <_If URL params exist, specify them in accordance with name mentioned in URL section. Separate into optional and required. Document data constraints._> 
-
    **Required:**
  
-   `id=[integer]`
+    Row by Row: `n=<int>`
+    or 
+   Bulk update: `n = <int>-<int>`
 
-   **Optional:**
- 
-   `photo_id=[alphanumeric]`
-
-* **Data Params**
-
-  <_If making a post request, what should the body payload look like? URL Params rules apply here too._>
 
 * **Success Response:**
   
-  <_What should the status code be on success and is there any returned data? This is useful when people need to to know what their callbacks should expect!_>
-
   * **Code:** 200 <br />
-    **Content:** `{ id : 12 }`
+    **Content:** 
+    ```{"data": [
+    {
+      "awb": 244479,
+      "breadth": 42,
+      "buyer_city": "New Cedricville",
+      "buyer_pin": 2831,
+      "cancelled_date": null,
+      "current_status": "DEL",
+      "delivered_date": "2015-12-17 02:57:42",
+      "delivery_attempt_count": 2,
+      "dispatch_date": "2015-12-14 01:13:30",
+      "heavy": false,
+      "height": 29,
+      "id": 653,
+      "last_mile_arrival_date": "2015-12-16 20:09:08",
+      "last_modified": "2015-12-28 00:48:24",
+      "length": 42,
+      "order_created_date": "2015-12-07 15:36:22",
+      "order_id": "80154b88-27d8-4fcf-8cc9-cccf77980951",
+      "price": 975040,
+      "product_category": "Tablets",
+      "product_id": "72e15f4f-ff7d-440c-8566-5fdc930af2db",
+      "product_name": "Strontium 8GB MicroSD Memory Card Class 4",
+      "product_price": 18306,
+      "product_qty": 10,
+      "promised_date": "2015-12-22 11:55:26",
+      "return_cause": null,
+      "reverse_logistics_booked_date": null,
+      "reverse_logistics_date": null,
+      "reverse_logistics_delivered_date": null,
+      "rto_date": null,
+      "rto_delivered_date": null,
+      "seller_city": "Buckridgemouth",
+      "seller_pin": 9775,
+      "shipper_confirmation_date": "2015-12-13 13:56:03",
+      "shipper_name": "SHPR4",
+      "shipping_cost": 46,
+      "weight": 21
+    }
+  ]
+}
+```
  
 * **Error Response:**
 
-  <_Most endpoints will have many ways they can fail. From unauthorized access, to wrongful parameters etc. All of those should be liste d here. It might seem repetitive, but it helps prevent assumptions from being made where they should be._>
-
-  * **Code:** 401 UNAUTHORIZED <br />
-    **Content:** `{ error : "Log in" }`
-
-  OR
-
-  * **Code:** 422 UNPROCESSABLE ENTRY <br />
-    **Content:** `{ error : "Email Invalid" }`
+  * **Code:** 404 Not Found <br />
+    **Content:** `{'error': 'Not found'}}`
 
 * **Sample Call:**
+```
+$ curl -i localhost:5000/fetch?n=80-90
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 14699
+Server: Werkzeug/0.11.11 Python/3.5.2
+Date: Fri, 25 Nov 2016 04:03:12 GMT
 
-  <_Just a sample call to your endpoint in a runnable format ($.ajax call or a curl request) - this makes life easier and more predictable._> 
+{
+  "data": [...
+  ]
+  ...
+  }
 
+```
 * **Notes:**
 
-  <_This is where all uncertainties, commentary, discussion etc. can go. I recommend timestamping and identifying oneself when leaving comments here._> 
+Zero indexing has been taken care of so rows should start from 1 for the first row. This is a pythonic range so 90-100 would fetch rows from 90 to 99.
+
+* **/count**
+
+This route counts the number of orders grouped by `order_created_date`, given the `shipper name`.
+
+* **Method:**
+  
+  `GET` 
+  
+*  **URL Params**
+
+   **Required:**
+ 
+    Row by Row: `shipper_name=<str>`
+
+
+* **Success Response:**
+  
+  * **Code:** 200 OK <br />
+    **Content:** 
+        ```
+
+    {
+      "Shipper Name": [
+        [
+          "Sat, 05 Dec 2015 05:36:19 GMT",
+          1
+        ],
+        [
+          "Sun, 06 Dec 2015 04:50:00 GMT",
+          1
+        ],
+        [
+          "Wed, 09 Dec 2015 22:55:46 GMT",
+          1
+        ],
+        ...
+      ]
+      ...
+    }
+    ```
+ 
+* **Error Response:**
+
+  * **Code:** 404 Not Found <br />
+    **Content:** `{'error': 'Not found'}}`
+
+* **Sample Call:**
+```
+$ curl -i localhost:5000/count?shipper_name=SHPR2
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    Content-Length: 8086
+    Server: Werkzeug/0.11.11 Python/3.5.2
+    Date: Fri, 25 Nov 2016 04:28:27 GMT
+
+{
+  "data": [...
+  ]
+  ...
+  }
+
+```
+
+
+* **/query**
+
+This route queries the DB using parameters and outputs `shipper_name`
+    - `order_id`
+    - `seller_city` 
+    - `buyer_city`
+    - `product_category`
+
+The parameter can be passed as a single set or multiple comma separated values. 
+
+* **Method:**
+  
+  `GET` 
+  
+*  **URL Params**
+
+   **Required:**
+    Any one of them is `required`
+    - `order_id=<str>`
+    - `seller_city=<str>`
+    - `buyer_city=<str>`
+    - `product_category=<str>`
+
+    To use multiple values, for example:
+
+    - `buyer_city=<str,str,str>`
+
+* **Success Response:**
+  
+  * **Code:** 200 <br />
+    **Content:** 
+    ```
+    {
+  "Shipper Name": [
+    [
+      "SHPR3"
+    ]
+  ]
+}
+```
+ 
+* **Error Response:**
+
+  * **Code:** 404 Not Found <br />
+    **Content:** `{'error': 'Not found'}}`
+
+* **Sample Call:**
+```
+$ curl -i localhost:5000/query?seller_city=Boyleland
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 54
+Server: Werkzeug/0.11.11 Python/3.5.2
+Date: Fri, 25 Nov 2016 04:41:51 GMT
+
+{
+  "Shipper Name": [
+    [
+      "SHPR3"
+    ]
+  ]
+}
+
+```
+
+```
+$ curl -i localhost:5000/query?order_id=3081f2a7-709a-4fd1-9c35-92bbee0089fe
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 54
+Server: Werkzeug/0.11.11 Python/3.5.2
+Date: Fri, 25 Nov 2016 04:42:35 GMT
+
+{
+  "Shipper Name": [
+    [
+      "SHPR1"
+    ]
+  ]
+}
+
+```
+
+$ curl -i localhost:5000/query?product_category=Clothing&buyer_city=North Pamala
+[1] 72861
+-bash: Pamala: command not found
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 2798
+Server: Werkzeug/0.11.11 Python/3.5.2
+Date: Fri, 25 Nov 2016 04:44:44 GMT
+
+{
+  "Shipper Name": [
+    [
+      "SHPR4"
+    ],
+    [
+      "SHPR6"
+    ],
+    [
+      "SHPR7"
+    ],
+    [
+      "SHPR1"
+    ],
+    [
+      "SHPR7"
+    ],
+    [
+      "SHPR5"
+    ],
+    [
+      "SHPR7"
+    ],
+```

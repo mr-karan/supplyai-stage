@@ -82,14 +82,14 @@ def query():
 @app.route('/count', methods=['GET'])
 def count():
     result = meta.tables['result']
-    if request.args.get('n') is None:
+    if request.args.get('shipper_name') is None:
         abort(404)
     shipper_name = request.args.get('shipper_name')
-    m = session.query(result.c.order_created_date, \
+    names = session.query(result.c.order_created_date, \
                       func.count(result.c.order_created_date)).filter(\
                       result.c.shipper_name== shipper_name).group_by(\
                       result.c.order_created_date).all()
-    return jsonify({'Shipper Name': m})
+    return jsonify({'Shipper Name': names})
 
 @app.route("/fetch", methods=['GET'])
 def fetch():

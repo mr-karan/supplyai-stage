@@ -67,7 +67,7 @@ def create_tables(con,meta, session, path,lower_limit,upper_limit):
 
     api_result =[]
     for i in data[lower_limit:upper_limit]:
-        record = {
+        fullrecord = {
                     'id' : i[0],
                     'awb' : i[1],
                     'breadth' : i[2],
@@ -105,23 +105,22 @@ def create_tables(con,meta, session, path,lower_limit,upper_limit):
                     'shipping_cost' : i[34],
                     'weight' : i[35]
                 }
-        api_result.append(record)
+        resultrecord = {
+                        'order_id' : i[16],
+                        'buyer_city' : i[3],
+                        'seller_city' : i[30],
+                        'product_category' : i[18],
+                        'shipper_name' : i[33],
+                        'order_created_date' : i[15],
+                        }
+        api_result.append(fullrecord)
         try:
-            con.execute(fulldata.insert(), record)
+            con.execute(fulldata.insert(), fullrecord)
+            con.execute(result.insert(), resultrecord)
+
         except IntegrityError:
             pass
-        smallertable =  'INSERT into result (order_id, buyer_city, seller_city, product_category,'\
-                    'shipper_name,order_created_date)\nSELECT order_id, buyer_city, seller_city,product_category,'\
-                    'shipper_name,order_created_date\nFROM fulldata'
     
-        try:
-            cursor.execute(smallertable)
 
-        except:
-                pass
-    so.commit()
-
-
-        
     return api_result
 
