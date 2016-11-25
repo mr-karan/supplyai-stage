@@ -102,7 +102,7 @@ Date: Fri, 25 Nov 2016 04:03:12 GMT
 
 Zero indexing has been taken care of so rows should start from 1 for the first row. This is a pythonic range so 90-100 would fetch rows from 90 to 99.
 
-* **/count**
+##### /count
 
 This route counts the number of orders grouped by `order_created_date`, given the `shipper name`.
 
@@ -121,10 +121,9 @@ This route counts the number of orders grouped by `order_created_date`, given th
   
   * **Code:** 200 OK <br />
     **Content:** 
+        
         ```
-
-    {
-      "Shipper Name": [
+        {"Shipper Name": [
         [
           "Sat, 05 Dec 2015 05:36:19 GMT",
           1
@@ -137,18 +136,18 @@ This route counts the number of orders grouped by `order_created_date`, given th
           "Wed, 09 Dec 2015 22:55:46 GMT",
           1
         ],
-        ...
-      ]
-      ...
-    }
+        ...] ...}
+        
     ```
- 
+    
+ ```
 * **Error Response:**
 
   * **Code:** 404 Not Found <br />
     **Content:** `{'error': 'Not found'}}`
 
 * **Sample Call:**
+
 ```
 $ curl -i localhost:5000/count?shipper_name=SHPR2
     HTTP/1.0 200 OK
@@ -166,9 +165,10 @@ $ curl -i localhost:5000/count?shipper_name=SHPR2
 ```
 
 
-* **/query**
+##### /query
 
 This route queries the DB using parameters and outputs `shipper_name`
+    
     - `order_id`
     - `seller_city` 
     - `buyer_city`
@@ -248,7 +248,7 @@ Date: Fri, 25 Nov 2016 04:42:35 GMT
 }
 
 ```
-
+```
 $ curl -i localhost:5000/query?product_category=Clothing&buyer_city=North Pamala
 [1] 72861
 -bash: Pamala: command not found
