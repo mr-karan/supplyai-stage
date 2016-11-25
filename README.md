@@ -93,6 +93,10 @@ Date: Fri, 25 Nov 2016 04:03:12 GMT
   }
 
 ```
+
+![/fetch/](screenshots/fetch.png)
+![/fetch/](screenshots/fetch2.png)
+
 * **Notes:**
 
 Zero indexing has been taken care of so rows should start from 1 for the first row. This is a pythonic range so 90-100 would fetch rows from 90 to 99.
@@ -155,6 +159,9 @@ $ curl -i localhost:5000/count?shipper_name=SHPR2
   }
 
 ```
+
+![/fetch/](screenshots/count.png)
+
 ---
 
 #### /query
@@ -274,3 +281,4 @@ Date: Fri, 25 Nov 2016 04:44:44 GMT
       "SHPR7"
     ],
 ```
+![/fetch/](screenshots/query.png)
