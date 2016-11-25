@@ -19,22 +19,17 @@ This route fetches `n` rows from CSV and ingests in DB. `n` can be an integer li
   
   `GET` 
   
-   * **URL Params**
-
-   **Required:**
- 
-    Row by Row: `n=<int>`
-    or 
-   Bulk update: `n = <int>-<int>`
+   * ** RequiredURL Params** 
+   
+    Row by Row: `n=<int>`  or  Bulk update: `n = <int>-<int>`
 
 
-* **Success Response:**
+  * **Success Response:**
   
   * **Code:** 200 <br />
     **Content:** 
-    ```
-    {"data": [
-    {
+    ``` {"data": [
+       {
       "awb": 244479,
       "breadth": 42,
       "buyer_city": "New Cedricville",
@@ -102,7 +97,9 @@ Date: Fri, 25 Nov 2016 04:03:12 GMT
 
 Zero indexing has been taken care of so rows should start from 1 for the first row. This is a pythonic range so 90-100 would fetch rows from 90 to 99.
 
-##### /count
+---
+
+#### /count
 
 This route counts the number of orders grouped by `order_created_date`, given the `shipper name`.
 
@@ -110,16 +107,14 @@ This route counts the number of orders grouped by `order_created_date`, given th
   
   `GET` 
   
-*  **URL Params**
+*  **Required URL Params**
 
-   **Required:**
- 
     Row by Row: `shipper_name=<str>`
 
 
 * **Success Response:**
   
-  * **Code:** 200 OK <br />
+ * **Code:** 200 OK <br />
     **Content:** 
         
         ```
@@ -138,13 +133,10 @@ This route counts the number of orders grouped by `order_created_date`, given th
         ],
         ...] ...}
         
-    ```
-    
- ```
 * **Error Response:**
 
-  * **Code:** 404 Not Found <br />
-    **Content:** `{'error': 'Not found'}}`
+ * **Code:** 404 Not Found <br />
+   **Content:** `{'error': 'Not found'}}`
 
 * **Sample Call:**
 
@@ -163,9 +155,9 @@ $ curl -i localhost:5000/count?shipper_name=SHPR2
   }
 
 ```
+---
 
-
-##### /query
+#### /query
 
 This route queries the DB using parameters and outputs `shipper_name`
     
@@ -180,10 +172,10 @@ The parameter can be passed as a single set or multiple comma separated values.
   
   `GET` 
   
-*  **URL Params**
+*  **Required URL Params**
 
-   **Required:**
     Any one of them is `required`
+    
     - `order_id=<str>`
     - `seller_city=<str>`
     - `buyer_city=<str>`
