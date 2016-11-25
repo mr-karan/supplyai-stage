@@ -11,15 +11,15 @@
 
 #### API Routes
 
-* **/fetch**
+##### /fetch
 
 This route fetches `n` rows from CSV and ingests in DB. `n` can be an integer like `785` or a range like `90-100`.
 
-* **Method:**
+  *  **Method:**
   
   `GET` 
   
-*  **URL Params**
+   * **URL Params**
 
    **Required:**
  
@@ -32,7 +32,8 @@ This route fetches `n` rows from CSV and ingests in DB. `n` can be an integer li
   
   * **Code:** 200 <br />
     **Content:** 
-    ```{"data": [
+    ```
+    {"data": [
     {
       "awb": 244479,
       "breadth": 42,
@@ -81,6 +82,7 @@ This route fetches `n` rows from CSV and ingests in DB. `n` can be an integer li
     **Content:** `{'error': 'Not found'}}`
 
 * **Sample Call:**
+
 ```
 $ curl -i localhost:5000/fetch?n=80-90
 HTTP/1.0 200 OK
