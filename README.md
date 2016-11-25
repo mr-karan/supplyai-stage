@@ -15,20 +15,22 @@
 
 This route fetches `n` rows from CSV and ingests in DB. `n` can be an integer like `785` or a range like `90-100`.
 
-  *  **Method:**
+  -  **Method:**
   
   `GET` 
-  
-   * ** RequiredURL Params** 
+
+ **Required URL Params** 
    
-    Row by Row: `n=<int>`  or  Bulk update: `n = <int>-<int>`
+        Row by Row: `n=<int>`  or  Bulk update: `n = <int>-<int>`
 
 
-  * **Success Response:**
+  - **Success Response:**
   
-  * **Code:** 200 <br />
-    **Content:** 
-    ``` {"data": [
+    - **Code:** 200 <br />
+    - **Content:** 
+   
+    ```
+    {"data": [
        {
       "awb": 244479,
       "breadth": 42,
@@ -73,8 +75,8 @@ This route fetches `n` rows from CSV and ingests in DB. `n` can be an integer li
  
 * **Error Response:**
 
-  * **Code:** 404 Not Found <br />
-    **Content:** `{'error': 'Not found'}}`
+  - **Code:** 404 Not Found <br />
+  - **Content:** `{'error': 'Not found'}}`
 
 * **Sample Call:**
 
@@ -117,8 +119,8 @@ This route counts the number of orders grouped by `order_created_date`, given th
 
 * **Success Response:**
   
- * **Code:** 200 OK <br />
-    **Content:** 
+ - **Code:** 200 OK <br />
+ - **Content:** 
         
         ```
         {"Shipper Name": [
@@ -138,8 +140,8 @@ This route counts the number of orders grouped by `order_created_date`, given th
         
 * **Error Response:**
 
- * **Code:** 404 Not Found <br />
-   **Content:** `{'error': 'Not found'}}`
+ - **Code:** 404 Not Found <br />
+ - **Content:** `{'error': 'Not found'}}`
 
 * **Sample Call:**
 
@@ -194,7 +196,7 @@ The parameter can be passed as a single set or multiple comma separated values.
 * **Success Response:**
   
   * **Code:** 200 <br />
-    **Content:** 
+  * **Content:** 
     ```
     {
   "Shipper Name": [
@@ -208,7 +210,7 @@ The parameter can be passed as a single set or multiple comma separated values.
 * **Error Response:**
 
   * **Code:** 404 Not Found <br />
-    **Content:** `{'error': 'Not found'}}`
+  * **Content:** `{'error': 'Not found'}}`
 
 * **Sample Call:**
 ```
