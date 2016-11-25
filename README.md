@@ -9,6 +9,22 @@
  Go to `localhost:5000/upload/` and use the uploader utility to upload files. The file is stored in `/upload/` directory and only accepts
  `.csv` files.
 
+#### Example Routes
+
+- Upload: [localhost:5000/upload]
+
+- Row by row insertion: [localhost:5000/fetch?n=1] 
+
+- Bulk Insertion : [localhost:5000/fetch?n=80-90]
+
+- Query :
+    - [http://localhost:5000/query?order_id=96a90543-ff1b-418c-bf2c-84fcdac75e2b]
+    - [http://localhost:5000/query?seller_city=Boyleland&buyer_city=Rolfsontown]
+    - [http://localhost:5000/query?seller_city=Boyleland&buyer_city=Rolfsontown&product_category=Furnishing]
+
+- Error Page : [http://localhost:5000/fetch?inavlid=something] 
+
+
 #### API Routes
 
 ##### /fetch
