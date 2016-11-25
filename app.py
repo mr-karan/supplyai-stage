@@ -8,7 +8,7 @@ from werkzeug import secure_filename
 from sqlalchemy import create_engine, func, MetaData
 from sqlalchemy.sql import and_, or_
 from sqlalchemy.orm import sessionmaker
-
+from models import create_tables
 
 def connect(user, password, db, host='localhost', port=5432):
     '''Returns a connection and a metadata object
@@ -34,7 +34,6 @@ UPLOAD_FOLDER = cwd + '/upload/'
 ALLOWED_EXTENSIONS = set(['csv'])
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-filename = 'data.csv'
 
 
 def allowed_file(filename):
@@ -54,8 +53,8 @@ def hello():
 
 @app.route('/query', methods=['GET','POST'])
 def query():
-    
-    result = meta.tables['fulldata']
+
+    result = meta.tables['result']
     args = (request.args)
     conditions = []
     q = session.query(result.c.shipper_name)
@@ -82,7 +81,7 @@ def query():
 
 @app.route('/count', methods=['GET'])
 def count():
-    result = meta.tables['fulldata']
+    result = meta.tables['result']
     if request.args.get('n') is None:
         abort(404)
     shipper_name = request.args.get('shipper_name')
@@ -117,14 +116,11 @@ def fetch():
     else:
         upper_limit = l[0]
         lower_limit = l[0] - 1
-
-
+    filename ='data.csv'
     path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    df = pd.read_csv(path, sep=',')
-    df = df.where((pd.notnull(df)), None)
-    data = df.iloc[lower_limit:upper_limit]
-    api_result = data.to_json(orient='values')
-    data.to_sql('fulldata', con, if_exists='append')
+    print(lower_limit)
+    print(upper_limit)
+    api_result = create_tables(con,meta,session,path,lower_limit,upper_limit)
     return jsonify({'data':api_result})
     
 
@@ -137,7 +133,6 @@ def create_data():
             if not os.path.exists(UPLOAD_FOLDER):
                 os.makedirs(UPLOAD_FOLDER)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             return redirect(url_for('create_data'))
     return """
     <!doctype html>
